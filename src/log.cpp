@@ -1,4 +1,5 @@
 #include "log.h"
+#include "commit.h"
 #include "constants.h"
 #include "fmt/core.h"
 #include "pottyutil.h"
@@ -21,8 +22,13 @@ int log(const Args &settings) {
         return newHash;
     };
 
-    for (auto hash = butHash(); !hash.empty(); hash = nextHash(hash)) {
-        fmt::print("{}\n", hash);
+    for (auto hash = butHash(); !hash.empty();) {
+
+        auto commit = Commit{hash};
+
+        fmt::print("{} {}\n", hash.substr(0, 8), commit.message);
+
+        hash = commit.parent;
     }
 
     return 0;

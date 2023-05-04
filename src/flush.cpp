@@ -7,6 +7,7 @@
 #include "status.h"
 #include <filesystem>
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -37,7 +38,19 @@ int flush(const Args &settings) {
 
     auto commitHash = hash(str);
 
-    std::ofstream{commitPath / commitHash} << str << "\n";
+    auto path = commitPath / commitHash;
+
+    if (std::filesystem::exists(path)) {
+        fmt::print("no changes to commit in current potty");
+        return 1;
+    }
+
+    std::ofstream{commitPath} << "\n#commit message";
+
+    std::system(fmt::format("vim \"{}\"", commitMsgPath.string()).c_str());
+
+    std::ofstream{path} << str << "\n"
+                        << std::ifstream{commitMsgPath}.rdbuf() << "\n";
 
     std::ofstream{butPath} << commitHash << "\n";
 

@@ -14,6 +14,7 @@ add_executable(
     src/flush.cpp
     src/diff.cpp
     src/log.cpp
+    src/commit.cpp
 )
 
 
