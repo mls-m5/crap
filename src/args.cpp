@@ -31,14 +31,14 @@ Args::Args(int argc, char *argv[], const CommandInfos &infos)
         }
 
         args.erase(args.begin(), args.begin() + 2);
+        method = args.at(0);
     }
     else {
+        method = args.at(0);
         if (method != "init") {
             locateRoot();
         }
     }
-
-    method = args.at(0);
 
     args.erase(args.begin());
 

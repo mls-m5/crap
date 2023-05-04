@@ -6,6 +6,14 @@
 
 namespace crap {
 
+// TODO: Handle wildcards
+struct Ignore {
+    std::vector<std::filesystem::path> paths;
+    Ignore();
+
+    bool shouldIgnore(const std::filesystem::path &path);
+};
+
 struct Status {
     Status();
 

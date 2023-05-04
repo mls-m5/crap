@@ -1,8 +1,8 @@
+#include "add.h"
 #include "args.h"
 #include "init.h"
 #include "status.h"
 #include <string_view>
-#include <unordered_map>
 
 using namespace crap;
 
@@ -29,10 +29,16 @@ int main(int argc, char *argv[]) {
     const auto infos = std::vector<Args::CommandInfo>{
         {"init", init, "Create a fresh crap potty"},
         {"commit", commit, "Save changes in potty"},
-        {"add", commit, "Sage changes for commit"},
-        {"flush", flush, "Flush changes"},
+        {"dump", add, "Dump into the potty"},
+        {"flush", flush, "Flush changes into tank"},
         {"status", status, "Show the state of the current potty"},
         {"shame", shame, "Find out who is guilty of a specific change"},
+    };
+
+    const auto corrections = std::vector<std::pair<std::string, std::string>>{
+        {"add", "dump"},
+        {"commit", "flush"},
+        {"blame", "shame"},
     };
 
     Args settings(argc, argv, infos);
@@ -43,6 +49,18 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    fmt::print(std::cerr, "invalid command: {}", settings.method);
+    for (auto &correction : corrections) {
+        if (correction.first == settings.method) {
+
+            fmt::print(std::cerr,
+                       "Command '{}' does not exist, did you mean '{}'? See "
+                       "'crap --help'\n",
+                       settings.method,
+                       correction.second);
+            return 1;
+        }
+    }
+
+    fmt::print(std::cerr, "Command '{}' does not exist\n", settings.method);
     settings.printHelp(1);
 }

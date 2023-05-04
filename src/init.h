@@ -11,11 +11,11 @@ namespace crap {
 
 inline int init(const Args &settings) {
     if (std::filesystem::is_directory(pottyPath)) {
-        fmt::print(std::cerr, "potty already exists... abort");
+        fmt::print(std::cerr, "potty already exists... abort\n");
         return 1;
     }
 
-    fmt::print("creating crap potty...");
+    fmt::print("creating crap potty...\n");
 
     std::filesystem::create_directories(pottyPath);
     std::filesystem::create_directories(droppingsPath);

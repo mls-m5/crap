@@ -7,6 +7,7 @@ add_executable(
     src/main.cpp
     src/args.cpp
     src/status.cpp
+    src/add.cpp
     )
 
 target_compile_features(
