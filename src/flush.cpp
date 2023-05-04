@@ -3,6 +3,7 @@
 #include "fmt/core.h"
 #include "fmt/ostream.h"
 #include "hash.h"
+#include "pottyutil.h"
 #include "status.h"
 #include <filesystem>
 #include <fstream>
@@ -10,19 +11,6 @@
 #include <string>
 
 namespace crap {
-
-namespace {
-
-std::string butHash() {
-    auto file = std::ifstream{butPath};
-    std::string line;
-
-    std::getline(file, line);
-
-    return line;
-}
-
-} // namespace
 
 int flush(const Args &settings) {
     fmt::print("Flushing changes...\n");

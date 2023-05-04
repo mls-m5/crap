@@ -13,6 +13,7 @@ add_executable(
     src/hash.cpp
     src/flush.cpp
     src/diff.cpp
+    src/log.cpp
 )
 
 
