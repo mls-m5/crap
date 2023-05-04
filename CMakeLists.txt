@@ -14,8 +14,24 @@ target_compile_features(
     )
 
 find_package(Threads)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG 9.1.0 # Replace with the desired version or commit
+)
+
+FetchContent_MakeAvailable(fmt)
+
 target_link_libraries(
     crap
     PRIVATE
     ${CMAKE_THREAD_LIBS_INIT}
+    fmt::fmt
     )
+
+add_subdirectory(
+    test
+)
