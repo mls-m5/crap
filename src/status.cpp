@@ -67,7 +67,7 @@ int status(const Args &settings) {
         fmt::print("- {}\n", d.string());
     }
     for (auto &m : status.modified) {
-        fmt::print("m {} {}\n", m.path.string(), hash(m.path.string()));
+        fmt::print("m {} file hash\n", m.path.string());
     }
     return 0;
 }
@@ -97,7 +97,7 @@ Status::Status() {
 
     std::ranges::sort(files);
 
-    auto staged = std::vector<std::filesystem::path>{};
+    staged = std::vector<std::filesystem::path>{};
 
     for (auto it = std::filesystem::recursive_directory_iterator{pottyPath};
          it != std::filesystem::recursive_directory_iterator{};

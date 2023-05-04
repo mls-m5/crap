@@ -11,7 +11,9 @@ add_executable(
     src/verify.cpp
     src/hash/sha256.cpp
     src/hash.cpp
-    )
+    src/flush.cpp
+)
+
 
 target_compile_features(
     crap

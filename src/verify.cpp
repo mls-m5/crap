@@ -21,6 +21,14 @@ bool verify() {
         }
     }
 
+    for (auto &dir : crap::requiredFiles) {
+        if (!std::filesystem::is_regular_file(dir)) {
+            fmt::print("potty is corrupt: file {} does not exist",
+                       dir.string());
+            return false;
+        }
+    }
+
     return true;
 }
 

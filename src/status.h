@@ -32,6 +32,7 @@ struct Status {
     std::vector<std::filesystem::path> added;
     std::vector<std::filesystem::path> deleted;
     std::vector<File> modified;
+    std::vector<std::filesystem::path> staged;
 };
 
 int status(const Args &settings);

@@ -1,5 +1,6 @@
 #include "add.h"
 #include "args.h"
+#include "flush.h"
 #include "init.h"
 #include "status.h"
 #include <string_view>
@@ -9,11 +10,6 @@ using namespace crap;
 namespace {
 
 int commit(const Args &settings) {
-    fmt::print("Flushing changes...\n");
-    return 0;
-}
-
-int flush(const Args &settings) {
     fmt::print("Flushing changes...\n");
     return 0;
 }

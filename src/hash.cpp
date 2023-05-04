@@ -2,13 +2,14 @@
 
 #include "hash/sha256.h"
 #include <array>
+#include <fstream>
 #include <iomanip>
 #include <ios>
 #include <string>
 
 namespace {
 
-std::string to_hex(std::string_view binary_data) {
+std::string toHex(std::string_view binary_data) {
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
 
@@ -22,19 +23,39 @@ std::string to_hex(std::string_view binary_data) {
 } // namespace
 
 std::string crap::hash(std::string_view data) {
-    //    std::array<unsigned char, 32> hashStr; // 32 bytes for the SHA-256
-    //    hash
     blk_SHA256_CTX ctx;
 
-    //    blk_SHA256_Init(&ctx);
-    //    blk_SHA256_Update(
-    //        &ctx, data.data(), data.size()); // -1 to exclude the null
-    //        terminator
-    ctx.update(data); // -1 to exclude the null terminator
+    ctx.update(data);
     auto hashStr = ctx.final();
-    //    blk_SHA256_Final(static_cast<unsigned char *>(hashStr.data()), &ctx);
 
-    return to_hex(std::string{hashStr.begin(), hashStr.end()});
+    return toHex(std::string{hashStr.begin(), hashStr.end()});
 }
 
-std::string crap::hashFile(std::filesystem::path path) {}
+std::string crap::hashFile(std::filesystem::path path) {
+    constexpr size_t bufferSize = 4096;
+    std::array<char, bufferSize> buffer;
+
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open()) {
+        throw std::runtime_error("Cannot open file: " + path.string());
+    }
+
+    blk_SHA256_CTX ctx;
+    while (file.read(buffer.data(), buffer.size())) {
+        std::streamsize bytesRead = file.gcount();
+        ctx.update(
+            std::string_view{buffer.data(), static_cast<size_t>(bytesRead)});
+    }
+
+    // Process remaining bytes if any
+    std::streamsize bytesRead = file.gcount();
+    if (bytesRead > 0) {
+        ctx.update(
+            std::string_view{buffer.data(), static_cast<size_t>(bytesRead)});
+    }
+
+    file.close();
+
+    auto hashStr = ctx.final();
+    return toHex(std::string{hashStr.begin(), hashStr.end()});
+}
