@@ -4,7 +4,7 @@
 
 namespace crap {
 
-void status(const Args &settings) {
+int status(const Args &settings) {
     using namespace crap;
 
     fmt::print("Everything is just crappy");
@@ -18,5 +18,7 @@ void status(const Args &settings) {
 
         fmt::print("{}\n", it->path().string());
     }
+
+    return 0;
 }
 } // namespace crap

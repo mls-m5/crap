@@ -8,33 +8,38 @@ using namespace crap;
 
 namespace {
 
-void commit(const Args &settings) {
+int commit(const Args &settings) {
     fmt::print("Flushing changes...\n");
+    return 0;
 }
 
-void flush(const Args &settings) {
+int flush(const Args &settings) {
     fmt::print("Flushing changes...\n");
+    return 0;
 }
 
-void shame(const Args &settings) {
+int shame(const Args &settings) {
     fmt::print("Shame on you\n");
+    return 0;
 }
 
 } // namespace
 
 int main(int argc, char *argv[]) {
-    Args settings(argc, argv);
-
-    auto map = std::unordered_map<std::string, Args::FT>{
-        {"commit", commit},
-        {"flush", flush},
-        {"status", status},
-        {"init", init},
+    const auto infos = std::vector<Args::CommandInfo>{
+        {"init", init, "Create a fresh crap potty"},
+        {"commit", commit, "Save changes in potty"},
+        {"flush", flush, "Flush changes"},
+        {"status", status, "Show the state of the current potty"},
+        {"shame", shame, "Find out who is guilty of a specific change"},
     };
 
-    if (auto f = map.find(settings.method); f != map.end()) {
-        f->second(settings);
-        return 0;
+    Args settings(argc, argv, infos);
+
+    for (auto &info : infos) {
+        if (info.name == settings.method) {
+            return info.f(settings);
+        }
     }
 
     fmt::print(std::cerr, "invalid command: {}", settings.method);

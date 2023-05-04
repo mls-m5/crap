@@ -9,15 +9,17 @@
 
 namespace crap {
 
-inline void init(const Args &settings) {
+inline int init(const Args &settings) {
     if (std::filesystem::is_directory(potty)) {
         fmt::print(std::cerr, "potty already exists... abort");
-        return;
+        return 1;
     }
 
     fmt::print("creating crap potty...");
 
     std::filesystem::create_directories(".crap/potty");
+
+    return 0;
 }
 
 } // namespace crap

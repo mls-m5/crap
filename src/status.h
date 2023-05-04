@@ -4,5 +4,6 @@
 
 namespace crap {
 
-void status(const Args &settings);
+int status(const Args &settings);
+
 }

@@ -7,7 +7,8 @@
 
 using namespace crap;
 
-Args::Args(int argc, char *argv[]) {
+Args::Args(int argc, char *argv[], const CommandInfos &infos)
+    : commandInfos{infos} {
     args = std::vector<std::string>{argv + 1, argv + argc};
 
     if (args.empty()) {
@@ -67,20 +68,24 @@ void Args::locateRoot() {
 }
 
 void Args::printHelp(int code) {
-    std::string_view helpMessage = R"(
+    auto commandDescription = std::string{};
+
+    for (auto &info : commandInfos) {
+        commandDescription +=
+            fmt::format("  {:<15} {}\n", info.name, info.description);
+    }
+
+    auto helpMessage = fmt::format(R"(
 Usage: crap [-C <dir>] <command> [options]
 
 Commands:
-  init      Create a fresh crap potty
-  commit    Commit changes
-  flush     Flush changes
-  status    Show the state of the current repository
-  shame     Show who is guilty of a specific row
+{}
 
 Options:
-  -h, --help    Show this help message and exit
-  -C <dir>      Work from the specified directory <dir>
-)";
+  -h, --help      Show this help message and exit
+  -C <dir>        Work from the specified directory <dir>
+)",
+                                   commandDescription);
     std::cout << helpMessage << std::endl;
 
     std::exit(code);
