@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
     const auto infos = std::vector<Args::CommandInfo>{
         {"init", init, "Create a fresh crap potty"},
         {"commit", commit, "Save changes in potty"},
+        {"add", commit, "Sage changes for commit"},
         {"flush", flush, "Flush changes"},
         {"status", status, "Show the state of the current potty"},
         {"shame", shame, "Find out who is guilty of a specific change"},

@@ -42,7 +42,7 @@ Args::Args(int argc, char *argv[], const CommandInfos &infos)
 
     args.erase(args.begin());
 
-    if (!std::filesystem::is_directory(crap::potty)) {
+    if (!std::filesystem::is_directory(crap::pottyPath)) {
         if (method != "init") {
             fmt::print(std::cerr, "potty is not initialized\n");
             std::exit(1);
@@ -54,16 +54,20 @@ void Args::locateRoot() {
     auto currentPath =
         std::filesystem::absolute(std::filesystem::current_path());
 
-    for (; !currentPath.empty() && !std::filesystem::is_directory(potty);
+    for (; !currentPath.empty() && std::filesystem::is_directory(pottyPath);
          currentPath = currentPath.parent_path()) {
 
-        if (std::filesystem::is_directory(currentPath / potty)) {
+        auto p = currentPath / pottyPath;
+
+        if (std::filesystem::is_directory(p)) {
             std::filesystem::current_path(currentPath);
             return;
         }
     }
 
-    fmt::print(std::cerr, "directory is not a valid crap potty\n");
+    fmt::print(std::cerr,
+               "\"{}\" is not a valid crap potty\n",
+               std::filesystem::current_path().string());
     std::exit(1);
 }
 
