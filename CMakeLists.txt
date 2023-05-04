@@ -5,6 +5,8 @@ project(crap)
 add_executable(
     crap
     src/main.cpp
+    src/args.cpp
+    src/status.cpp
     )
 
 target_compile_features(
