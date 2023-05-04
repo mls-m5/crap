@@ -1,6 +1,7 @@
 #include "status.h"
 #include "constants.h"
 #include "fmt/core.h"
+#include "hash.h"
 #include <algorithm>
 #include <array>
 #include <bits/ranges_algo.h>
@@ -66,7 +67,7 @@ int status(const Args &settings) {
         fmt::print("- {}\n", d.string());
     }
     for (auto &m : status.modified) {
-        fmt::print("m {}\n", m.path.string());
+        fmt::print("m {} {}\n", m.path.string(), hash(m.path.string()));
     }
     return 0;
 }

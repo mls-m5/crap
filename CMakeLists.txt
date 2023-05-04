@@ -9,6 +9,8 @@ add_executable(
     src/status.cpp
     src/add.cpp
     src/verify.cpp
+    src/hash/sha256.cpp
+    src/hash.cpp
     )
 
 target_compile_features(

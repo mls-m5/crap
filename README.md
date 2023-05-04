@@ -62,3 +62,9 @@ crap flush
 
 
 So what are you waiting for? Convert your projects to crap today!
+
+
+# Licence
+The project is released under the GNU licence.
+
+For some subdirectories with files from other project check their respective licence.
