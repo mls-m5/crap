@@ -31,14 +31,15 @@ int main(int argc, char *argv[]) {
         {"commit", commit, "Save changes in potty"},
         {"dump", add, "Dump into the potty"},
         {"flush", flush, "Flush changes into tank"},
-        {"status", status, "Show the state of the current potty"},
-        {"shame", shame, "Find out who is guilty of a specific change"},
+        {"look", status, "Show the state of the current potty"},
+        {"shame", shame, "Find out who is guilty of a specific dump"},
     };
 
     const auto corrections = std::vector<std::pair<std::string, std::string>>{
         {"add", "dump"},
         {"commit", "flush"},
         {"blame", "shame"},
+        {"status", "look"},
     };
 
     Args settings(argc, argv, infos);
