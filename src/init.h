@@ -17,9 +17,9 @@ inline int init(const Args &settings) {
 
     fmt::print("creating crap potty...\n");
 
-    std::filesystem::create_directories(pottyPath);
-    std::filesystem::create_directories(droppingsPath);
-    std::filesystem::create_directories(commitPath);
+    for (auto &dir : requiredDirectories) {
+        std::filesystem::create_directories(dir);
+    }
 
     return 0;
 }

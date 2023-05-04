@@ -29,10 +29,6 @@ int add(const crap::Args &args) {
     auto ignore = Ignore{};
 
     for (auto &file : files) {
-        auto parentPath = file.parent_path();
-        if (!parentPath.empty()) {
-            std::filesystem::create_directories(pottyPath / parentPath);
-        }
         auto ec = std::error_code{};
 
         if (ignore.shouldIgnore(file)) {

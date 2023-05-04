@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "fmt/core.h"
 #include "fmt/ostream.h"
+#include "verify.h"
 #include <filesystem>
 #include <iostream>
 
@@ -45,6 +46,11 @@ Args::Args(int argc, char *argv[], const CommandInfos &infos)
     if (!std::filesystem::is_directory(crap::pottyPath)) {
         if (method != "init") {
             fmt::print(std::cerr, "potty is not initialized\n");
+            std::exit(1);
+        }
+    }
+    if (method != "init") {
+        if (!verify()) {
             std::exit(1);
         }
     }
