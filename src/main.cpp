@@ -1,5 +1,6 @@
 #include "add.h"
 #include "args.h"
+#include "diff.h"
 #include "flush.h"
 #include "init.h"
 #include "status.h"
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
         {"flush", flush, "Flush changes into tank"},
         {"look", status, "Show the state of the current potty"},
         {"shame", shame, "Find out who is guilty of a specific dump"},
+        {"diff", diff, "Show differences between pottys"},
     };
 
     const auto corrections = std::vector<std::pair<std::string, std::string>>{

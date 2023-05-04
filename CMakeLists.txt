@@ -12,6 +12,7 @@ add_executable(
     src/hash/sha256.cpp
     src/hash.cpp
     src/flush.cpp
+    src/diff.cpp
 )
 
 

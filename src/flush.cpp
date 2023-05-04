@@ -49,9 +49,9 @@ int flush(const Args &settings) {
 
     auto commitHash = hash(str);
 
-    std::ofstream{commitPath / commitHash} << str;
+    std::ofstream{commitPath / commitHash} << str << "\n";
 
-    std::ofstream{butPath} << commitHash;
+    std::ofstream{butPath} << commitHash << "\n";
 
     return 0;
 }
