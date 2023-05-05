@@ -24,6 +24,15 @@ Embrace the simplicity of Crap, and never feel overwhelmed by version control ag
 
 ![](usage.gif)
 
+
+## Crap is the pinnacle of c++
+
+As the creator of Git and Linux himself
+[prophezised](http://harmful.cat-v.org/software/c++/linus) a crap versioning
+system written in c++ was destined to come to into existence. Therefore crap
+is implemented in only pure c++.
+
+
 ## Example crap workflow
 
 1. Create some folder with data that you want to version control
@@ -66,6 +75,7 @@ crap flush
 
 
 So what are you waiting for? Convert your projects to crap today!
+
 
 
 # Licence
