@@ -5,6 +5,7 @@
 #include "fmt/ostream.h"
 #include "pottyutil.h"
 #include "status.h"
+#include <bits/ranges_algo.h>
 #include <filesystem>
 #include <iostream>
 #include <system_error>
@@ -30,7 +31,7 @@ int add(const crap::Args &args) {
 
     auto ignore = Ignore{};
 
-    auto commit = Commit::loadDropped();
+    auto commit = Commit::loadDumped();
 
     for (auto &file : files) {
         auto ec = std::error_code{};
@@ -46,6 +47,14 @@ int add(const crap::Args &args) {
         if (auto f = commit.findFromPath(file)) {
             if (f->hash == path.filename()) {
                 continue;
+            }
+            else {
+
+                auto it =
+                    std::remove_if(commit.files.begin(),
+                                   commit.files.end(),
+                                   [&file](auto &a) { return file == a.path; });
+                commit.files.erase(it, commit.files.end());
             }
         }
 

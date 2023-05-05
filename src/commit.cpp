@@ -24,9 +24,47 @@ Commit::Commit(std::string parent, std::vector<File> files, std::string message)
     , files{std::move(files)}
     , message{std::move(message)} {}
 
-Commit Commit::loadDropped() {
+Commit Commit::loadDumped() {
     auto commit = Commit{};
     commit.loadFile(pottyFilePath());
+    return commit;
+}
+
+Commit Commit::loadUndumped() {
+    auto commit = Commit{};
+
+    {
+        auto ignore = Ignore();
+        auto files = std::vector<std::filesystem::path>{};
+
+        for (auto it = std::filesystem::recursive_directory_iterator{"."};
+             it != std::filesystem::recursive_directory_iterator{};
+             ++it) {
+
+            if (it->path().filename() == ".crap") {
+                it.disable_recursion_pending();
+                continue;
+            }
+
+            auto path = std::filesystem::relative(it->path(), ".");
+
+            if (ignore.shouldIgnore(path)) {
+                continue;
+            }
+
+            files.push_back(std::move(path));
+        }
+
+        std::ranges::sort(files);
+
+        for (auto &file : files) {
+            commit.files.push_back({hashFile(file), file, file});
+        }
+
+        commit.message = "UNDROPPED_CHANGES";
+        commit.parent = "POTTY";
+    }
+
     return commit;
 }
 
@@ -34,6 +72,12 @@ std::string Commit::flush(std::filesystem::path path, bool temporary) {
     auto ss = std::ostringstream{};
 
     std::ranges::sort(files, [](auto &a, auto &b) { return a.path < b.path; });
+
+    auto subRange = std::ranges::unique(
+        files, [](auto &a, auto &b) { return a.path == b.path; });
+
+    // Erase the remaining duplicate elements
+    files.erase(subRange.end(), files.end());
 
     // Parent commit
     fmt::print(ss, "{}\n", butHash());
@@ -117,17 +161,6 @@ void Commit::loadFile(std::filesystem::path path) {
     while (!message.empty() && std::isspace(message.front())) {
         message.erase(0, 1);
     }
-}
-
-Commit stagedFiles(const Status &status) {
-    auto filesView =
-        status.staged | std::views::transform([](std::filesystem::path path) {
-            return Commit::File{};
-        });
-
-    return Commit{butHash(),
-                  std::vector<Commit::File>{filesView.begin(), filesView.end()},
-                  ""};
 }
 
 } // namespace crap

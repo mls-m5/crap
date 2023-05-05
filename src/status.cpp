@@ -1,5 +1,6 @@
 #include "status.h"
 #include "commit.h"
+#include "diff.h"
 #include "fmt/core.h"
 #include "pottyutil.h"
 #include <algorithm>
@@ -19,27 +20,34 @@ const std::string_view reset = "\033[0m";
 
 int status(const Args &settings) {
     auto status = Status{};
-    if (!status.staged.empty()) {
+    if (status.dropped.isChanged()) {
         fmt::print("dumped files to flush:\n");
-        for (auto &s : status.staged) {
-            fmt::print("{}  {}\n", green, s.string());
+
+        std::cout << green;
+        for (auto &a : status.dropped.added) {
+            fmt::print("+ {}\n", a.string());
+        }
+        for (auto &d : status.dropped.deleted) {
+            fmt::print("- {}\n", d.string());
+        }
+        for (auto &m : status.dropped.modified) {
+            fmt::print("m {}\n", m.path.string());
         }
         fmt::print("{}---\n", reset);
     }
 
-    if (!status.added.empty() || !status.deleted.empty() ||
-        !status.modified.empty()) {
+    if (status.dropped.isChanged() || status.undropped.isChanged()) {
         fmt::print("Potty is filthy\n");
     }
 
     std::cout << red;
-    for (auto &a : status.added) {
+    for (auto &a : status.undropped.added) {
         fmt::print("+ {}\n", a.string());
     }
-    for (auto &d : status.deleted) {
+    for (auto &d : status.undropped.deleted) {
         fmt::print("- {}\n", d.string());
     }
-    for (auto &m : status.modified) {
+    for (auto &m : status.undropped.modified) {
         fmt::print("m {}\n", m.path.string());
     }
 
@@ -48,80 +56,12 @@ int status(const Args &settings) {
 }
 
 Status::Status() {
-    auto ignore = Ignore();
+    auto undropped = Commit::loadUndumped();
+    auto dropped = Commit::loadDumped();
+    auto but = Commit{butHash()};
 
-    auto files = std::vector<std::filesystem::path>{};
-
-    for (auto it = std::filesystem::recursive_directory_iterator{"."};
-         it != std::filesystem::recursive_directory_iterator{};
-         ++it) {
-
-        if (it->path().filename() == ".crap") {
-            it.disable_recursion_pending();
-            continue;
-        }
-
-        auto path = std::filesystem::relative(it->path(), ".");
-
-        if (ignore.shouldIgnore(path)) {
-            continue;
-        }
-
-        files.push_back(std::move(path));
-    }
-
-    std::ranges::sort(files);
-
-    staged = std::vector<std::filesystem::path>{};
-
-    auto commit = Commit::loadDropped();
-    for (auto &it : commit.files)
-        staged.push_back(it.path);
-
-    std::ranges::sort(staged);
-
-    {
-        auto diff = std::vector<std::filesystem::path>{};
-        std::ranges::set_difference(files, staged, std::back_inserter(diff));
-        for (auto &d : diff) {
-            added.push_back(d);
-        }
-    }
-    {
-        auto diff = std::vector<std::filesystem::path>{};
-        std::ranges::set_difference(staged, files, std::back_inserter(diff));
-        for (auto &d : diff) {
-            deleted.push_back(d);
-        }
-    }
-
-    {
-        auto intersection = std::vector<std::filesystem::path>{};
-        std::ranges::set_intersection(
-            staged, files, std::back_inserter(intersection));
-        for (auto &path : intersection) {
-            //            auto stagedPath = pottyPath(path);
-
-            auto stagedPath = commit.findFromPath(path)->realPath;
-
-            auto changed1 = std::filesystem::last_write_time(path);
-            auto changed2 = std::filesystem::last_write_time(stagedPath);
-
-            if (changed1 != changed2) {
-                if (areFilesDifferent(path, stagedPath)) {
-                    modified.emplace_back(path, stagedPath, changed1, changed2);
-                }
-                else {
-                    std::filesystem::copy(
-                        path,
-                        stagedPath,
-                        std::filesystem::copy_options::overwrite_existing);
-
-                    std::filesystem::last_write_time(stagedPath, changed1);
-                }
-            }
-        }
-    }
+    this->dropped = Diff{but, dropped};
+    this->undropped = Diff{dropped, undropped};
 }
 
 Ignore::Ignore() {
