@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
         {"dump", add, "Dump into the potty"},
         {"flush", flush, "Flush changes into tank"},
         {"look", status, "Show the state of the current potty"},
-        {"shame", shame, "Find out who is guilty of a specific dump"},
+        {"shame", shame, "Find out who is guilty of a smelly dump"},
         {"diff", diff, "Show differences between pottys"},
         {"log", log, "Show history of your dumps"},
     };

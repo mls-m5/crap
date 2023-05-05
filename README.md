@@ -1,5 +1,7 @@
 # crap
 
+![Crap logo](logo.svg)
+
 Introducing Crap - a simple and intuitive version control system that takes the
 mess out of tracking your code changes
 
@@ -16,9 +18,9 @@ developers, we've harnessed the power of the latest machine learning
 technology. Our commitment to innovation guarantees a seamless and pleasant 
 experience for all users, even when dealing with untidy situations.
 
-Embrace the simplicity of Crap, and never feel overwhelmed by version control again!
-
 ![](high-tech-programming.png)
+
+Embrace the simplicity of Crap, and never feel overwhelmed by version control again!
 
 ## Example crap workflow
 
