@@ -5,6 +5,8 @@
 
 namespace crap {
 
+namespace constants {
+
 inline const auto crapRoot = std::filesystem::path{".crap"};
 inline const auto pottyPath = crapRoot / "potty";
 inline const auto commitPath = crapRoot / "commits";
@@ -22,5 +24,7 @@ inline const auto requiredDirectories = std::array{
 inline const auto requiredFiles = std::array{
     butPath,
 };
+
+} // namespace constants
 
 } // namespace crap

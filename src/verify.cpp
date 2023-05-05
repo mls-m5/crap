@@ -8,12 +8,12 @@
 namespace crap {
 
 bool verify() {
-    if (!std::filesystem::is_directory(crap::pottyPath)) {
+    if (!std::filesystem::is_directory(constants::pottyPath)) {
         fmt::print(std::cerr, "potty is not initialized\n");
         std::exit(1);
     }
 
-    for (auto &dir : crap::requiredDirectories) {
+    for (auto &dir : constants::requiredDirectories) {
         if (!std::filesystem::is_directory(dir)) {
             fmt::print("potty is corrupt: directory {} does not exist",
                        dir.string());
@@ -21,7 +21,7 @@ bool verify() {
         }
     }
 
-    for (auto &dir : crap::requiredFiles) {
+    for (auto &dir : constants::requiredFiles) {
         if (!std::filesystem::is_regular_file(dir)) {
             fmt::print("potty is corrupt: file {} does not exist",
                        dir.string());

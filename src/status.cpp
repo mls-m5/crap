@@ -1,7 +1,7 @@
 #include "status.h"
 #include "constants.h"
 #include "fmt/core.h"
-#include "hash.h"
+#include "pottyutil.h"
 #include <algorithm>
 #include <array>
 #include <bits/ranges_algo.h>
@@ -10,46 +10,6 @@
 #include <iterator>
 #include <ranges>
 #include <string>
-
-namespace {
-
-bool are_files_different(const std::filesystem::path &file_path1,
-                         const std::filesystem::path &file_path2) {
-    // Compare file sizes
-    auto file_size1 = std::filesystem::file_size(file_path1);
-    auto file_size2 = std::filesystem::file_size(file_path2);
-
-    if (file_size1 != file_size2) {
-        return true;
-    }
-
-    // Compare file contents
-    std::ifstream file1(file_path1, std::ios::binary);
-    std::ifstream file2(file_path2, std::ios::binary);
-
-    if (!file1.is_open() || !file2.is_open()) {
-        throw std::runtime_error(
-            "Unable to open one or both files for comparison.");
-    }
-
-    constexpr size_t buffer_size = 4096;
-    std::array<char, buffer_size> buffer1 = {};
-    std::array<char, buffer_size> buffer2 = {};
-
-    while (file1.read(buffer1.data(), buffer_size) &&
-           file2.read(buffer2.data(), buffer_size)) {
-        if (buffer1 != buffer2) {
-            return true;
-        }
-
-        file1 = {};
-        file2 = {};
-    }
-
-    return false;
-}
-
-} // namespace
 
 namespace crap {
 
@@ -99,11 +59,13 @@ Status::Status() {
 
     staged = std::vector<std::filesystem::path>{};
 
-    for (auto it = std::filesystem::recursive_directory_iterator{pottyPath};
+    for (auto it =
+             std::filesystem::recursive_directory_iterator{
+                 constants::pottyPath};
          it != std::filesystem::recursive_directory_iterator{};
          ++it) {
 
-        auto path = std::filesystem::relative(it->path(), pottyPath);
+        auto path = std::filesystem::relative(it->path(), constants::pottyPath);
 
         staged.push_back(std::move(path));
     }
@@ -130,12 +92,12 @@ Status::Status() {
         std::ranges::set_intersection(
             staged, files, std::back_inserter(intersection));
         for (auto &path : intersection) {
-            auto stagedPath = pottyPath / path;
+            auto stagedPath = pottyPath(path);
             auto changed1 = std::filesystem::last_write_time(path);
             auto changed2 = std::filesystem::last_write_time(stagedPath);
 
             if (changed1 != changed2) {
-                if (are_files_different(path, stagedPath)) {
+                if (areFilesDifferent(path, stagedPath)) {
                     modified.emplace_back(path, changed1, changed2);
                 }
                 else {

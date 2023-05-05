@@ -1,6 +1,5 @@
 #include "log.h"
 #include "commit.h"
-#include "constants.h"
 #include "fmt/core.h"
 #include "pottyutil.h"
 #include <fstream>
@@ -12,7 +11,7 @@ namespace crap {
 int log(const Args &settings) {
 
     auto nextHash = [](std::string_view hash) {
-        auto path = commitPath / hash;
+        auto path = strToCommitPath(hash);
 
         std::string newHash;
         auto file = std::ifstream{path};

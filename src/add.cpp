@@ -1,7 +1,7 @@
 #include "add.h"
-#include "constants.h"
 #include "fmt/core.h"
 #include "fmt/ostream.h"
+#include "pottyutil.h"
 #include "status.h"
 #include <filesystem>
 #include <iostream>
@@ -38,7 +38,7 @@ int add(const crap::Args &args) {
         }
 
         std::filesystem::copy(file,
-                              pottyPath / file,
+                              pottyPath(file),
                               std::filesystem::copy_options::overwrite_existing,
                               ec);
 

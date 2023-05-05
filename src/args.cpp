@@ -43,7 +43,7 @@ Args::Args(int argc, char *argv[], const CommandInfos &infos)
 
     args.erase(args.begin());
 
-    if (!std::filesystem::is_directory(crap::pottyPath)) {
+    if (!std::filesystem::is_directory(crap::constants::pottyPath)) {
         if (method != "init") {
             fmt::print(std::cerr, "potty is not initialized\n");
             std::exit(1);
@@ -60,10 +60,11 @@ void Args::locateRoot() {
     auto currentPath =
         std::filesystem::absolute(std::filesystem::current_path());
 
-    for (; !currentPath.empty() && std::filesystem::is_directory(pottyPath);
+    for (; !currentPath.empty() &&
+           std::filesystem::is_directory(constants::pottyPath);
          currentPath = currentPath.parent_path()) {
 
-        auto p = currentPath / pottyPath;
+        auto p = currentPath / constants::pottyPath;
 
         if (std::filesystem::is_directory(p)) {
             std::filesystem::current_path(currentPath);

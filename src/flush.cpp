@@ -13,6 +13,12 @@
 
 namespace crap {
 
+namespace {
+
+bool isPottyFilesChanged(const Status &status) {}
+
+} // namespace
+
 int flush(const Args &settings) {
     fmt::print("Flushing changes...\n");
 
@@ -26,7 +32,7 @@ int flush(const Args &settings) {
 
     for (auto &file : status.staged) {
         auto hash = hashFile(file);
-        auto dpath = droppingsPath / hash;
+        auto dpath = droppingsPath(hash);
 
         fmt::print(ss, "{} {}\n", hash, file.string());
         if (!std::filesystem::exists(dpath)) {
@@ -38,21 +44,21 @@ int flush(const Args &settings) {
 
     auto commitHash = hash(str);
 
-    auto path = commitPath / commitHash;
+    auto path = strToCommitPath(commitHash);
 
     if (std::filesystem::exists(path)) {
         fmt::print("no changes to commit in current potty");
         return 1;
     }
 
-    std::ofstream{commitPath} << "\n#commit message";
+    std::ofstream{commitMsgPath()} << "\n#commit message";
 
-    std::system(fmt::format("vim \"{}\"", commitMsgPath.string()).c_str());
+    std::system(fmt::format("vim \"{}\"", commitMsgPath().string()).c_str());
 
     std::ofstream{path} << str << "\n"
-                        << std::ifstream{commitMsgPath}.rdbuf() << "\n";
+                        << std::ifstream{commitMsgPath()}.rdbuf() << "\n";
 
-    std::ofstream{butPath} << commitHash << "\n";
+    std::ofstream{constants::butPath} << commitHash << "\n";
 
     return 0;
 }

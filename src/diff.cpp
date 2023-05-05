@@ -1,6 +1,7 @@
 #include "diff.h"
 #include "constants.h"
 #include "fmt/core.h"
+#include "pottyutil.h"
 #include "status.h"
 
 namespace crap {
@@ -37,7 +38,8 @@ int diff(const Args &settings) {
     }
 
     for (auto &m : status.modified) {
-        diffFiles(pottyPath / m.path, m.path, ("a" / m.path), ("b" / m.path));
+        diffFiles(
+            strToPottyPath(m.path), m.path, ("a" / m.path), ("b" / m.path));
     }
 
     return 0;

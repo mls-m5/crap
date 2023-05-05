@@ -1,6 +1,7 @@
 
 #include "commit.h"
 #include "constants.h"
+#include "pottyutil.h"
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -11,7 +12,7 @@
 namespace crap {
 
 Commit::Commit(std::string hash) {
-    auto file = std::ifstream{commitPath / hash};
+    auto file = std::ifstream{strToCommitPath(hash)};
 
     std::getline(file, parent);
 
