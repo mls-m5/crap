@@ -47,7 +47,7 @@ int add(const crap::Args &args) {
             return 1;
         }
 
-        fmt::print("added {}\n", file.string());
+        fmt::print("dumped {}\n", file.string());
     }
 
     return 0;

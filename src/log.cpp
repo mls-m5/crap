@@ -11,7 +11,7 @@ namespace crap {
 int log(const Args &settings) {
 
     auto nextHash = [](std::string_view hash) {
-        auto path = strToCommitPath(hash);
+        auto path = commitPath(hash);
 
         std::string newHash;
         auto file = std::ifstream{path};

@@ -13,13 +13,26 @@
 
 namespace crap {
 
+const std::string_view red = "\033[31m";
+const std::string_view green = "\033[32m";
+const std::string_view reset = "\033[0m";
+
 int status(const Args &settings) {
     auto status = Status{};
+    if (!status.staged.empty()) {
+        fmt::print("dumped files to flush:\n");
+        for (auto &s : status.staged) {
+            fmt::print("{}  {}\n", green, s.string());
+        }
+        fmt::print("{}---\n", reset);
+    }
+
     if (!status.added.empty() || !status.deleted.empty() ||
         !status.modified.empty()) {
         fmt::print("Potty is filthy\n");
     }
 
+    std::cout << red;
     for (auto &a : status.added) {
         fmt::print("+ {}\n", a.string());
     }
@@ -27,8 +40,10 @@ int status(const Args &settings) {
         fmt::print("- {}\n", d.string());
     }
     for (auto &m : status.modified) {
-        fmt::print("m {} file hash\n", m.path.string());
+        fmt::print("m {}\n", m.path.string());
     }
+
+    std::cout << reset;
     return 0;
 }
 

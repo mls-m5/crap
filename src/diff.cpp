@@ -39,7 +39,7 @@ int diff(const Args &settings) {
 
     for (auto &m : status.modified) {
         diffFiles(
-            strToPottyPath(m.path), m.path, ("a" / m.path), ("b" / m.path));
+            pottyPath(m.path), m.path, ("a" / m.path), ("b" / m.path));
     }
 
     return 0;

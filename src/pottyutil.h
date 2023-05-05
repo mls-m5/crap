@@ -8,12 +8,8 @@
 
 namespace crap {
 
-inline std::filesystem::path strToCommitPath(std::string_view str) {
+inline std::filesystem::path commitPath(std::string_view str) {
     return constants::commitPath / str;
-}
-
-inline std::filesystem::path strToPottyPath(std::filesystem::path str) {
-    return constants::pottyPath / str;
 }
 
 inline std::string readFirstLine(const std::filesystem::path &path) {
@@ -30,7 +26,7 @@ inline std::string butHash() {
 }
 
 inline std::string butParentPath(std::string_view hash) {
-    return readFirstLine(strToCommitPath(hash));
+    return readFirstLine(commitPath(hash));
 }
 
 inline std::string butParentPath() {
