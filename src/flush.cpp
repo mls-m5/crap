@@ -31,7 +31,7 @@ struct FlushArgs {
 } // namespace
 
 int flush(const Args &settings) {
-    fmt::print("Flushing changes...\n");
+    fmt::print("Flushing changes 🚽 ...\n");
 
     auto flushArgs = FlushArgs{settings};
 

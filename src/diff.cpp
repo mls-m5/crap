@@ -90,8 +90,8 @@ Diff::Diff(const Commit &a, const Commit &b) {
     {
 
         // Chat gpt magic
-        for (auto it1 = b.files.begin(), it2 = a.files.begin();
-             it1 != b.files.end() && it2 != a.files.end();) {
+        for (auto it1 = a.files.begin(), it2 = b.files.begin();
+             it1 != a.files.end() && it2 != b.files.end();) {
             if (*it1 < *it2) {
                 ++it1;
             }
@@ -101,7 +101,8 @@ Diff::Diff(const Commit &a, const Commit &b) {
             else {
 
                 if (it1->hash != it2->hash) {
-                    modified.push_back({it1->path, it1->path, it2->path});
+                    modified.push_back(
+                        {it1->path, it1->realPath, it2->realPath});
                 }
                 ++it1;
                 ++it2;

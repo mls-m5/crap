@@ -21,7 +21,7 @@ const std::string_view reset = "\033[0m";
 int status(const Args &settings) {
     auto status = Status{};
     if (status.dropped.isChanged()) {
-        fmt::print("dumped files to flush:\n");
+        fmt::print("Dumped files ready to flush:\n");
 
         std::cout << green;
         for (auto &a : status.dropped.added) {
@@ -37,7 +37,10 @@ int status(const Args &settings) {
     }
 
     if (status.dropped.isChanged() || status.undropped.isChanged()) {
-        fmt::print("Potty is filthy\n");
+        fmt::print("Potty is filthy 🤢\n");
+    }
+    else {
+        fmt::print("Potty is fresh 😇\n");
     }
 
     std::cout << red;
