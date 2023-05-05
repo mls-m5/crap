@@ -60,7 +60,7 @@ int add(const crap::Args &args) {
 
         commit.files.push_back({path.filename(), file, path});
 
-        fmt::print("dumped 💩 {}\n", file.string());
+        fmt::print("dumped 💩 {} into potty\n", file.string());
     }
 
     commit.message = "POTTY_TEMP_MESSAGE";

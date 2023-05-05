@@ -45,7 +45,7 @@ Args::Args(int argc, char *argv[], const CommandInfos &infos)
 
     if (!std::filesystem::is_directory(crap::constants::pottyPath)) {
         if (method != "init") {
-            fmt::print(std::cerr, "potty is not initialized\n");
+            fmt::print(std::cerr, "There is no potty\n");
             std::exit(1);
         }
     }
@@ -73,7 +73,7 @@ void Args::locateRoot() {
     }
 
     fmt::print(std::cerr,
-               "\"{}\" is not a valid crap potty\n",
+               "There is no potty at \"{}\" \n",
                std::filesystem::current_path().string());
     std::exit(1);
 }

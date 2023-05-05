@@ -22,6 +22,8 @@ experience for all users, even when dealing with untidy situations.
 
 Embrace the simplicity of Crap, and never feel overwhelmed by version control again!
 
+![](usage.gif)
+
 ## Example crap workflow
 
 1. Create some folder with data that you want to version control
