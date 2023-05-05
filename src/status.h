@@ -19,12 +19,17 @@ struct Status {
 
     struct File {
         using time_t = std::filesystem::file_time_type;
-        File(std::filesystem::path path, time_t changedTime, time_t stagedTime)
+        File(std::filesystem::path path,
+             std::filesystem::path dropping,
+             time_t changedTime,
+             time_t stagedTime)
             : path{path}
+            , dropping{dropping}
             , changedTime{changedTime}
             , stagedTime{stagedTime} {}
 
         std::filesystem::path path;
+        std::filesystem::path dropping;
         std::filesystem::file_time_type changedTime = {};
         std::filesystem::file_time_type stagedTime = {};
     };

@@ -3,6 +3,7 @@
 #include "fmt/core.h"
 #include "pottyutil.h"
 #include "status.h"
+#include <stdexcept>
 
 namespace crap {
 
@@ -37,10 +38,11 @@ int diff(const Args &settings) {
         diffFiles(d, "/dev/null", ("a" / d), "/dev/null");
     }
 
-    for (auto &m : status.modified) {
-        diffFiles(
-            pottyPath(m.path), m.path, ("a" / m.path), ("b" / m.path));
-    }
+    throw std::runtime_error{"reimplement this"};
+    //    for (auto &m : status.modified) {
+    //        diffFiles(
+    //            pottyPath(m.path), m.path, ("a" / m.path), ("b" / m.path));
+    //    }
 
     return 0;
 }

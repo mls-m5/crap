@@ -1,5 +1,5 @@
 #include "status.h"
-#include "constants.h"
+#include "commit.h"
 #include "fmt/core.h"
 #include "pottyutil.h"
 #include <algorithm>
@@ -74,16 +74,9 @@ Status::Status() {
 
     staged = std::vector<std::filesystem::path>{};
 
-    for (auto it =
-             std::filesystem::recursive_directory_iterator{
-                 constants::pottyPath};
-         it != std::filesystem::recursive_directory_iterator{};
-         ++it) {
-
-        auto path = std::filesystem::relative(it->path(), constants::pottyPath);
-
-        staged.push_back(std::move(path));
-    }
+    auto commit = Commit::loadDropped();
+    for (auto &it : commit.files)
+        staged.push_back(it.path);
 
     std::ranges::sort(staged);
 
@@ -107,13 +100,16 @@ Status::Status() {
         std::ranges::set_intersection(
             staged, files, std::back_inserter(intersection));
         for (auto &path : intersection) {
-            auto stagedPath = pottyPath(path);
+            //            auto stagedPath = pottyPath(path);
+
+            auto stagedPath = commit.findFromPath(path)->realPath;
+
             auto changed1 = std::filesystem::last_write_time(path);
             auto changed2 = std::filesystem::last_write_time(stagedPath);
 
             if (changed1 != changed2) {
                 if (areFilesDifferent(path, stagedPath)) {
-                    modified.emplace_back(path, changed1, changed2);
+                    modified.emplace_back(path, stagedPath, changed1, changed2);
                 }
                 else {
                     std::filesystem::copy(

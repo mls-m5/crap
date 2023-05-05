@@ -15,6 +15,7 @@ add_executable(
     src/diff.cpp
     src/log.cpp
     src/commit.cpp
+    src/droppings.cpp
 )
 
 

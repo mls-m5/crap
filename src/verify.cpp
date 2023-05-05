@@ -15,7 +15,7 @@ bool verify() {
 
     for (auto &dir : constants::requiredDirectories) {
         if (!std::filesystem::is_directory(dir)) {
-            fmt::print("potty is corrupt: directory {} does not exist",
+            fmt::print("potty is corrupt: directory {} does not exist\n",
                        dir.string());
             return false;
         }
@@ -23,7 +23,7 @@ bool verify() {
 
     for (auto &dir : constants::requiredFiles) {
         if (!std::filesystem::is_regular_file(dir)) {
-            fmt::print("potty is corrupt: file {} does not exist",
+            fmt::print("potty is corrupt: file {} does not exist\n",
                        dir.string());
             return false;
         }

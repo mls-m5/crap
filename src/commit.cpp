@@ -1,6 +1,9 @@
 
 #include "commit.h"
 #include "constants.h"
+#include "fmt/core.h"
+#include "fmt/ostream.h"
+#include "hash.h"
 #include "pottyutil.h"
 #include "status.h"
 #include <algorithm>
@@ -13,8 +16,70 @@
 namespace crap {
 
 Commit::Commit(std::string hash) {
-    auto file = std::ifstream{commitPath(hash)};
+    loadFile(commitPath(hash));
+}
 
+Commit::Commit(std::string parent, std::vector<File> files, std::string message)
+    : parent{std::move(parent)}
+    , files{std::move(files)}
+    , message{std::move(message)} {}
+
+Commit Commit::loadDropped() {
+    auto commit = Commit{};
+    commit.loadFile(pottyFilePath());
+    return commit;
+}
+
+std::string Commit::flush(std::filesystem::path path, bool temporary) {
+    auto ss = std::ostringstream{};
+
+    std::ranges::sort(files, [](auto &a, auto &b) { return a.path < b.path; });
+
+    // Parent commit
+    fmt::print(ss, "{}\n", butHash());
+    fmt::print(ss, "{}\n", files.size());
+
+    for (auto &file : files) {
+        fmt::print(ss, "{} {}\n", file.hash, file.path.string());
+    }
+
+    if (message.empty()) {
+
+        std::ofstream{commitMsgPath()} << "\n#dump message";
+
+        std::system(
+            fmt::format("vim \"{}\"", commitMsgPath().string()).c_str());
+        auto ss = std::ostringstream{};
+        ss << std::ifstream{commitMsgPath()}.rdbuf();
+        message = ss.str();
+    }
+
+    message = cleanMessage(message);
+
+    ss << message << "\n";
+
+    auto str = ss.str();
+    auto commitHash = hash(str);
+    if (path.empty()) {
+        path = commitPath(commitHash);
+    }
+
+    if (!temporary && std::filesystem::exists(path)) {
+        fmt::print("exactly the commit {} already exist", path.string());
+        return "";
+    }
+
+    std::ofstream{path} << str;
+
+    if (!temporary) {
+        std::ofstream{constants::butPath} << commitHash << "\n";
+    }
+
+    return commitHash;
+}
+
+void Commit::loadFile(std::filesystem::path path) {
+    auto file = std::ifstream{path};
     std::getline(file, parent);
 
     std::string numFiles;
@@ -38,7 +103,7 @@ Commit::Commit(std::string hash) {
 
         auto [hash, name] = split(line);
 
-        files.push_back({std::string{hash}, name, droppingsPath(name)});
+        files.push_back({std::string{hash}, name, droppingsPath(hash)});
     }
 
     for (std::string line; std::getline(file, line);) {
@@ -52,15 +117,7 @@ Commit::Commit(std::string hash) {
     while (!message.empty() && std::isspace(message.front())) {
         message.erase(0, 1);
     }
-
-    //    std::ranges::sort(files, [](auto &a, auto &b) { return a.path <
-    //    b.path; });
 }
-
-Commit::Commit(std::string parent, std::vector<File> files, std::string message)
-    : parent{std::move(parent)}
-    , files{std::move(files)}
-    , message{std::move(message)} {}
 
 Commit stagedFiles(const Status &status) {
     auto filesView =

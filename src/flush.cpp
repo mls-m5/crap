@@ -20,44 +20,44 @@ namespace crap {
 
 namespace {
 
-bool isPottyFilesChanged(const Status &status) {
-    auto parentCommit = Commit{butHash()};
-    for (auto &file : status.staged) {
-        auto committedFile = parentCommit.findFromPath(file);
-        if (!committedFile) {
-            return true;
-        }
+// bool isPottyFilesChanged(const Status &status) {
+//     auto parentCommit = Commit{butHash()};
+//     for (auto &file : status.staged) {
+//         auto committedFile = parentCommit.findFromPath(file);
+//         if (!committedFile) {
+//             return true;
+//         }
 
-        if (areFilesDifferent(pottyPath(file),
-                              droppingsPath(committedFile->hash))) {
-            return true;
-        }
-    }
+//        if (areFilesDifferent(pottyPath(file),
+//                              droppingsPath(committedFile->hash))) {
+//            return true;
+//        }
+//    }
 
-    auto tf = [](const Commit::File &file) { return file.path; };
+//    auto tf = [](const Commit::File &file) { return file.path; };
 
-    auto transformedCommmitFiles =
-        parentCommit.files | std::views::transform(tf);
+//    auto transformedCommmitFiles =
+//        parentCommit.files | std::views::transform(tf);
 
-    auto deleted = std::vector<std::filesystem::path>{};
-    auto added = std::vector<std::filesystem::path>{};
+//    auto deleted = std::vector<std::filesystem::path>{};
+//    auto added = std::vector<std::filesystem::path>{};
 
-    std::ranges::set_difference(
-        status.staged, transformedCommmitFiles, std::back_inserter(deleted));
+//    std::ranges::set_difference(
+//        status.staged, transformedCommmitFiles, std::back_inserter(deleted));
 
-    if (!deleted.empty()) {
-        return true;
-    }
+//    if (!deleted.empty()) {
+//        return true;
+//    }
 
-    std::ranges::set_difference(
-        transformedCommmitFiles, status.staged, std::back_inserter(added));
+//    std::ranges::set_difference(
+//        transformedCommmitFiles, status.staged, std::back_inserter(added));
 
-    if (!added.empty()) {
-        return true;
-    }
+//    if (!added.empty()) {
+//        return true;
+//    }
 
-    return false;
-}
+//    return false;
+//}
 
 struct FlushArgs {
     std::string message;
@@ -72,30 +72,6 @@ struct FlushArgs {
     }
 };
 
-std::string cleanMessage(std::string message) {
-    auto ss = std::istringstream{message};
-
-    for (std::string line; std::getline(ss, line);) {
-        if (line.empty()) {
-        }
-        else if (line.front() == '#') {
-            continue;
-        }
-    }
-
-    message = ss.str();
-
-    while (!message.empty() && std::isspace(message.back())) {
-        message.pop_back();
-    }
-
-    while (!message.empty() && std::isspace(message.front())) {
-        message.erase(0, 1);
-    }
-
-    return message;
-}
-
 } // namespace
 
 int flush(const Args &settings) {
@@ -103,63 +79,70 @@ int flush(const Args &settings) {
 
     auto flushArgs = FlushArgs{settings};
 
-    auto status = Status{};
+    auto commit = Commit::loadDropped();
+    commit.message = flushArgs.message;
 
-    if (!isPottyFilesChanged(status)) {
-        fmt::print("no changes to put\n");
-        return 1;
-    }
+    commit.flush();
 
-    auto ss = std::ostringstream{};
+    fmt::print("done...\n");
 
-    // Parent commit
-    fmt::print(ss, "{}\n", butHash());
-    fmt::print(ss, "{}\n", status.staged.size());
+    //    auto status = Status{};
 
-    for (auto &file : status.staged) {
-        auto hash = hashFile(file);
-        auto dpath = droppingsPath(hash);
+    //    if (!isPottyFilesChanged(status)) {
+    //        fmt::print("no changes to put\n");
+    //        return 1;
+    //    }
 
-        fmt::print(ss, "{} {}\n", hash, file.string());
-        if (!std::filesystem::exists(dpath)) {
-            std::ofstream{dpath} << std::ifstream{file}.rdbuf();
-        }
-    }
+    //    auto ss = std::ostringstream{};
 
-    auto str = ss.str();
+    //    // Parent commit
+    //    fmt::print(ss, "{}\n", butHash());
+    //    fmt::print(ss, "{}\n", status.staged.size());
 
-    auto commitHash = hash(str);
+    //    for (auto &file : status.staged) {
+    //        auto hash = hashFile(file);
+    //        auto dpath = droppingsPath(hash);
 
-    auto path = commitPath(commitHash);
+    //        fmt::print(ss, "{} {}\n", hash, file.string());
+    //        if (!std::filesystem::exists(dpath)) {
+    //            std::ofstream{dpath} << std::ifstream{file}.rdbuf();
+    //        }
+    //    }
 
-    if (std::filesystem::exists(path)) {
-        fmt::print("no changes to commit in current potty\n");
-        return 1;
-    }
+    //    auto str = ss.str();
 
-    auto message = flushArgs.message;
+    //    auto commitHash = hash(str);
 
-    if (message.empty()) {
+    //    auto path = commitPath(commitHash);
 
-        std::ofstream{commitMsgPath()} << "\n#commit message";
+    //    if (std::filesystem::exists(path)) {
+    //        fmt::print("no changes to commit in current potty\n");
+    //        return 1;
+    //    }
 
-        std::system(
-            fmt::format("vim \"{}\"", commitMsgPath().string()).c_str());
-        auto ss = std::ostringstream{};
-        ss << std::ifstream{commitMsgPath()}.rdbuf();
-        message = ss.str();
-    }
+    //    auto message = flushArgs.message;
 
-    message = cleanMessage(message);
+    //    if (message.empty()) {
 
-    if (message.empty()) {
-        fmt::print(std::cerr, "no commit message, aborting...\n");
-        return 1;
-    }
+    //        std::ofstream{commitMsgPath()} << "\n#dump message";
 
-    std::ofstream{path} << str << "\n" << message << "\n";
+    //        std::system(
+    //            fmt::format("vim \"{}\"", commitMsgPath().string()).c_str());
+    //        auto ss = std::ostringstream{};
+    //        ss << std::ifstream{commitMsgPath()}.rdbuf();
+    //        message = ss.str();
+    //    }
 
-    std::ofstream{constants::butPath} << commitHash << "\n";
+    //    message = cleanMessage(message);
+
+    //    if (message.empty()) {
+    //        fmt::print(std::cerr, "no commit message, aborting...\n");
+    //        return 1;
+    //    }
+
+    //    std::ofstream{path} << str << "\n" << message << "\n";
+
+    //    std::ofstream{constants::butPath} << commitHash << "\n";
 
     return 0;
 }

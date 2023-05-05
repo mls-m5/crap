@@ -33,8 +33,13 @@ inline std::string butParentPath() {
     return butParentPath(butHash());
 }
 
-inline std::filesystem::path pottyPath(std::filesystem::path path) {
-    return constants::pottyPath / path;
+// TODO: Remove this. It should not be used any longer
+// inline std::filesystem::path pottyPath(std::filesystem::path path) {
+//    return constants::pottyPath / path;
+//}
+
+inline std::filesystem::path pottyFilePath() {
+    return constants::pottyFilePath;
 }
 
 inline std::filesystem::path droppingsPath(std::filesystem::path path) {
@@ -79,6 +84,32 @@ inline bool areFilesDifferent(const std::filesystem::path &file_path1,
     }
 
     return false;
+}
+
+inline std::string cleanMessage(std::string message) {
+    auto ss = std::istringstream{std::move(message)};
+
+    message.clear();
+
+    for (std::string line; std::getline(ss, line);) {
+        if (line.empty()) {
+        }
+        else if (line.front() == '#') {
+            continue;
+        }
+
+        message += line + "\n";
+    }
+
+    while (!message.empty() && std::isspace(message.back())) {
+        message.pop_back();
+    }
+
+    while (!message.empty() && std::isspace(message.front())) {
+        message.erase(0, 1);
+    }
+
+    return message;
 }
 
 } // namespace crap

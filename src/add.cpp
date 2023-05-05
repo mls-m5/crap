@@ -1,4 +1,6 @@
 #include "add.h"
+#include "commit.h"
+#include "droppings.h"
 #include "fmt/core.h"
 #include "fmt/ostream.h"
 #include "pottyutil.h"
@@ -28,6 +30,8 @@ int add(const crap::Args &args) {
 
     auto ignore = Ignore{};
 
+    auto commit = Commit::loadDropped();
+
     for (auto &file : files) {
         auto ec = std::error_code{};
 
@@ -37,18 +41,21 @@ int add(const crap::Args &args) {
             continue;
         }
 
-        std::filesystem::copy(file,
-                              pottyPath(file),
-                              std::filesystem::copy_options::overwrite_existing,
-                              ec);
+        auto path = addDropping(file);
 
-        if (ec) {
-            fmt::print(std::cerr, "failed to add '{}'\n", file.string());
-            return 1;
+        if (auto f = commit.findFromPath(file)) {
+            if (f->hash == path.filename()) {
+                continue;
+            }
         }
+
+        commit.files.push_back({path.filename(), file, path});
 
         fmt::print("dumped {}\n", file.string());
     }
+
+    commit.message = "POTTY_TEMP_MESSAGE";
+    commit.flush(pottyFilePath(), true);
 
     return 0;
 }

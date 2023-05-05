@@ -31,6 +31,19 @@ struct Commit {
     std::vector<File> files;
     std::string parent;
     std::string message;
+
+    // Load a commit that represent the dropped changes
+    static Commit loadDropped();
+
+    /// Add the commit to the history of
+    /// @return hash of the new commit
+    /// @param path is only used to save temporary drop
+    /// @param if the change is temporary and may overwrite old files
+    std::string flush(std::filesystem::path path = {}, bool temporary = false);
+
+private:
+    Commit() = default;
+    void loadFile(std::filesystem::path path);
 };
 
 Commit stagedFiles(const Status &status);
