@@ -8,6 +8,7 @@
 #include "status.h"
 #include <algorithm>
 #include <cctype>
+#include <filesystem>
 #include <fstream>
 #include <ranges>
 #include <string>
@@ -49,6 +50,9 @@ Commit Commit::loadUndumped() {
             auto path = std::filesystem::relative(it->path(), ".");
 
             if (ignore.shouldIgnore(path)) {
+                if (std::filesystem::is_directory(path)) {
+                    it.disable_recursion_pending();
+                }
                 continue;
             }
 

@@ -1,7 +1,6 @@
 #include "diff.h"
 #include "fmt/core.h"
 #include "pottyutil.h"
-#include "status.h"
 #include <algorithm>
 #include <ranges>
 #include <stdexcept>
@@ -47,8 +46,6 @@ int diff(const Args &settings) {
                     ? Diff{Commit{butHash()}, Commit::loadDumped()}
                     : Diff{Commit::loadDumped(), Commit::loadUndumped()};
 
-    //    auto status = Status{};
-
     for (auto &a : diff.added) {
         diffFiles("/dev/null", a, "/dev/null", ("b" / a));
     }
@@ -57,7 +54,6 @@ int diff(const Args &settings) {
         diffFiles(d, "/dev/null", ("a" / d), "/dev/null");
     }
 
-    //    throw std::runtime_error{"reimplement this"};
     for (auto &m : diff.modified) {
         diffFiles(m.a, m.b, ("a" / m.path), ("b" / m.path));
     }
@@ -93,7 +89,6 @@ Diff::Diff(const Commit &a, const Commit &b) {
 
     {
 
-        //        auto common = std::vector<Commit::File>{};
         // Chat gpt magic
         for (auto it1 = b.files.begin(), it2 = a.files.begin();
              it1 != b.files.end() && it2 != a.files.end();) {
