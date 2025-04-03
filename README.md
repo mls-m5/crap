@@ -18,8 +18,6 @@ developers, we've harnessed the power of the latest machine learning
 technology. Our commitment to innovation guarantees a seamless and pleasant 
 experience for all users, even when dealing with untidy situations.
 
-![](high-tech-programming.png)
-
 Embrace the simplicity of Crap, and never feel overwhelmed by version control again!
 
 ![](usage.gif)
